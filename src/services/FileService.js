@@ -33,9 +33,6 @@ export const removeFile = async (fileId) => {
   filesStorage = filesStorage.filter(file => file.id !== fileId);
 };
 
-/**
- * Gibt alle gespeicherten Dateien zurück
- */
 export const getFiles = async () => {
   return [...filesStorage];
 };

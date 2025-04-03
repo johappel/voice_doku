@@ -3,10 +3,43 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { processTextWithLLM } from '../services/LLMProcessingService';
 import { getDefaultTemplate } from '../utils/TemplateManager';
+import { TemplateService } from '../services/TemplateService';
 import '../styles/components/MarkdownEditor.css';
 
-const MarkdownEditor = ({ transcription, isProcessing, setIsProcessing }) => {
+const MarkdownEditor = ({
+  transcription,
+  isProcessing,
+  setIsProcessing,
+  onMarkdownUpdate
+}) => {
   const [markdownText, setMarkdownText] = useState(getDefaultTemplate());
+  const [templates, setTemplates] = useState([]);
+
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const loadedTemplates = await TemplateService.getAllTemplates();
+        setTemplates(loadedTemplates);
+      } catch (error) {
+        console.error('Failed to load templates:', error);
+      }
+    };
+    loadTemplates();
+  }, []);
+
+  const handleTemplateChange = async (e) => {
+    const templateId = e.target.value;
+    if (!templateId) return;
+    
+    try {
+      const template = await TemplateService.getTemplateById(templateId);
+      // Template loaded successfully
+      setMarkdownText(template.content);
+    } catch (error) {
+      console.error('Failed to load template:', error);
+      alert(`Template konnte nicht geladen werden: ${error.message}`);
+    }
+  };
   const [preview, setPreview] = useState('');
   const [viewMode, setViewMode] = useState('split'); // 'edit', 'preview', 'split'
   const prevTranscriptionRef = useRef('');
@@ -50,24 +83,35 @@ const MarkdownEditor = ({ transcription, isProcessing, setIsProcessing }) => {
   return (
     <div className="markdown-editor">
       <div className="editor-controls">
-        <button 
+        <button
           className={viewMode === 'edit' ? 'active' : ''}
           onClick={() => setViewMode('edit')}
         >
           Bearbeiten
         </button>
-        <button 
+        <button
           className={viewMode === 'preview' ? 'active' : ''}
           onClick={() => setViewMode('preview')}
         >
           Vorschau
         </button>
-        <button 
+        <button
           className={viewMode === 'split' ? 'active' : ''}
           onClick={() => setViewMode('split')}
         >
           Split View
         </button>
+        <select
+          className="template-selector"
+          onChange={handleTemplateChange}
+        >
+          <option value="">Vorlage wählen</option>
+          {templates.map(template => (
+            <option key={template.id} value={template.id}>
+              {template.name}
+            </option>
+          ))}
+        </select>
       </div>
       
       <div className={`editor-container ${viewMode}`}>

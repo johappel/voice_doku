@@ -1,0 +1,17 @@
+[
+  {
+    "id": "t123_creative-writing.md",
+    "name": "Kreatives Schreiben",
+    "description": "Vorlage für kreative Schreibübungen"
+  },
+  {
+    "id": "unterrichtsplanung.md", 
+    "name": "Unterrichtsplanung",
+    "description": "Standardvorlage für Unterrichtsplanungen"
+  },
+  {
+    "id": "software.md",
+    "name": "Software Dokumentation",
+    "description": "Vorlage für technische Dokumentationen"
+  }
+]
