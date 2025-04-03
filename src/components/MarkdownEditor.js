@@ -10,7 +10,9 @@ const MarkdownEditor = ({
   transcription,
   isProcessing,
   setIsProcessing,
-  onMarkdownUpdate
+  onMarkdownUpdate,
+  onToggleFullscreen,
+  isEditorFullscreen
 }) => {
   const [markdownText, setMarkdownText] = useState(getDefaultTemplate());
   const [templates, setTemplates] = useState([]);
@@ -101,6 +103,20 @@ const MarkdownEditor = ({
         >
           Split View
         </button>
+        <button
+          className="zoom-button"
+          onClick={(e) => {
+            e.preventDefault();
+            requestAnimationFrame(() => {
+              onToggleFullscreen();
+            });
+          }}
+          title="Vollbildmodus"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+          </svg>
+        </button>
         <select
           className="template-selector"
           onChange={handleTemplateChange}
@@ -114,7 +130,7 @@ const MarkdownEditor = ({
         </select>
       </div>
       
-      <div className={`editor-container ${viewMode}`}>
+      <div className={`editor-container ${viewMode} ${isEditorFullscreen ? 'fullscreen' : ''}`}>
         {(viewMode === 'edit' || viewMode === 'split') && (
           <div className="editor-pane">
             <textarea

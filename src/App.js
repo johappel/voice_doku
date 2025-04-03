@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import VoiceRecorder from './components/VoiceRecorder';
 import TranscriptionTicker from './components/TranscriptionTicker';
 import MarkdownEditor from './components/MarkdownEditor';
@@ -14,6 +14,11 @@ const App = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [markdownContent, setMarkdownContent] = useState(getDefaultTemplate());
   const [files, setFiles] = useState([]);
+  const [isEditorFullscreen, setIsEditorFullscreen] = useState(false);
+
+  const toggleEditorFullscreen = useCallback(() => {
+    setIsEditorFullscreen(prev => !prev);
+  }, []);
 
   // Entwurf aus dem LocalStorage laden
   useEffect(() => {
@@ -68,13 +73,14 @@ const App = () => {
           />
         </section>
         
-        <section className="editor-section">
-          <MarkdownEditor 
+        <section className={`editor-section ${isEditorFullscreen ? 'fullscreen' : ''}`}>
+          <MarkdownEditor
             transcription={transcription}
             isProcessing={isProcessing}
             setIsProcessing={setIsProcessing}
             markdownContent={markdownContent}
             onMarkdownUpdate={handleMarkdownUpdate}
+            onToggleFullscreen={toggleEditorFullscreen}
           />
         </section>
         
